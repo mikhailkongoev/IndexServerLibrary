@@ -7,6 +7,8 @@
     <groupId>org.jetbrains</groupId>
     <artifactId>IndexServerLibrary</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>IndexServerLibrary</name>
 
 
 </project>
