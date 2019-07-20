@@ -1,5 +1,6 @@
 package index;
 
+import configuration.Configurations;
 import interfaces.lexer.Lexer;
 
 import java.nio.file.Path;
@@ -13,6 +14,10 @@ public class IndexServiceImpl extends AbstractIndexService {
     public IndexServiceImpl(Lexer lexer, ReadWriteLock lock) {
         super(lexer);
         this.lock = lock;
+    }
+
+    public IndexServiceImpl(Lexer lexer) {
+        this(lexer, Configurations.getIndexLock());
     }
 
     @Override

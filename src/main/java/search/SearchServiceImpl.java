@@ -1,5 +1,6 @@
 package search;
 
+import configuration.Configurations;
 import interfaces.lexer.Lexer;
 
 import java.nio.file.Path;
@@ -15,6 +16,10 @@ public class SearchServiceImpl extends AbstractSearchService {
     public SearchServiceImpl(Lexer lexer, ReadWriteLock lock) {
         super(lexer);
         this.lock = lock;
+    }
+
+    public SearchServiceImpl(Lexer lexer) {
+        this(lexer, Configurations.getIndexLock());
     }
 
     @Override
