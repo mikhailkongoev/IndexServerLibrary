@@ -1,4 +1,4 @@
-package index;
+package impl.index;
 
 import interfaces.lexer.Lexer;
 import interfaces.services.IndexService;

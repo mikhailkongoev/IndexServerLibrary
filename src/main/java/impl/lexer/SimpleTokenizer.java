@@ -1,4 +1,4 @@
-package lexer;
+package impl.lexer;
 
 import interfaces.lexer.Lexer;
 

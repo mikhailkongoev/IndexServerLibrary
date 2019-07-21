@@ -1,6 +1,6 @@
-package search;
+package impl.search;
 
-import configuration.Configurations;
+import impl.configuration.Configurations;
 import interfaces.lexer.Lexer;
 
 import java.nio.file.Path;
@@ -30,7 +30,7 @@ public class SearchServiceImpl extends AbstractSearchService {
 
             Set<Path> relevantFiles = new HashSet<>();
             for (String keyword: keywords) {
-                //TODO: query to index, get documents, then get files
+                //TODO: query to impl.index, get documents, then get files
             }
             return relevantFiles;
         } finally {

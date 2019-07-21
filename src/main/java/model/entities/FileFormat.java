@@ -3,11 +3,13 @@ package model.entities;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 @Entity
-@NamedQuery(name = "InsignificantWord.findAllInsignificantWords", query = "from InsignificantWord")
-public class InsignificantWord {
+public class FileFormat {
     @Id
     @GeneratedValue
     @Getter
@@ -17,5 +19,5 @@ public class InsignificantWord {
     @Column
     @Getter
     @Setter
-    private String value;
+    private String format;
 }

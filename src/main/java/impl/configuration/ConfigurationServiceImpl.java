@@ -1,14 +1,14 @@
-package configuration;
+package impl.configuration;
 
-import index.AbstractIndexService;
-import index.IndexServiceImpl;
+import impl.index.AbstractIndexService;
+import impl.index.IndexServiceImpl;
+import impl.lexer.SimpleTokenizer;
+import impl.search.AbstractSearchService;
+import impl.search.SearchServiceImpl;
 import interfaces.lexer.Lexer;
 import interfaces.services.ConfigurationService;
 import interfaces.services.IndexService;
 import interfaces.services.SearchService;
-import lexer.SimpleTokenizer;
-import search.AbstractSearchService;
-import search.SearchServiceImpl;
 
 import java.util.ArrayList;
 import java.util.Collection;

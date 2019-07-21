@@ -1,4 +1,4 @@
-package lexer;
+package impl.lexer;
 
 import interfaces.lexer.Lexer;
 import model.entities.InsignificantWord;
@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static configuration.Configurations.em;
+import static impl.configuration.Configurations.em;
 
 public class FilteringTokenizer implements Lexer {
     @Override

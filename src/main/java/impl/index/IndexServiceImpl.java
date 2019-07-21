@@ -1,6 +1,6 @@
-package index;
+package impl.index;
 
-import configuration.Configurations;
+import impl.configuration.Configurations;
 import interfaces.lexer.Lexer;
 
 import java.nio.file.Path;
@@ -24,7 +24,7 @@ public class IndexServiceImpl extends AbstractIndexService {
     public void addToIndex(Path path) {
         lock.writeLock().lock();
         try {
-            //TODO: add file or directory into index
+            //TODO: add file or directory into impl.index
         } finally {
             lock.writeLock().unlock();
         }
@@ -34,7 +34,7 @@ public class IndexServiceImpl extends AbstractIndexService {
     public void removeFromIndex(Path path) {
         lock.writeLock().lock();
         try {
-            //TODO: remove file or directory from index
+            //TODO: remove file or directory from impl.index
         } finally {
             lock.writeLock().unlock();
         }

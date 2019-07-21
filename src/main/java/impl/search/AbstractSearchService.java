@@ -1,4 +1,4 @@
-package search;
+package impl.search;
 
 import interfaces.lexer.Lexer;
 import interfaces.services.SearchService;
