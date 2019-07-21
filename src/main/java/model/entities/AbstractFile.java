@@ -10,11 +10,6 @@ import javax.persistence.*;
 @DiscriminatorColumn(name="DTYPE", discriminatorType = DiscriminatorType.INTEGER)
 public abstract class AbstractFile {
     @Id
-    @GeneratedValue
-    @Getter
-    @Setter
-    private long id;
-
     @Column
     @Getter
     @Setter
