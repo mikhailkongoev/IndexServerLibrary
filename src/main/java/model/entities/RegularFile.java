@@ -19,7 +19,7 @@ public class RegularFile extends AbstractFile {
     @Setter
     private FileFormat fileFormat;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @Getter
     @Setter
     private Document document;

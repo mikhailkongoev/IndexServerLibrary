@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Document {
@@ -19,8 +21,13 @@ public class Document {
     @Setter
     private String name;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @Getter
     @Setter
     private RegularFile file;
+
+    @OneToMany
+    @Getter
+    @Setter
+    private List<IndexLine> keywords = new ArrayList<>();
 }
