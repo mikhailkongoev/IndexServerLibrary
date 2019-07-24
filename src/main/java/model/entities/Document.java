@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@NamedQuery(name = "Document.findDocumentsByFileList", query = "from Document where file in :filesList")
 public class Document {
 
     @Id

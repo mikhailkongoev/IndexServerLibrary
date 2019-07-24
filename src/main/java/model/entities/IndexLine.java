@@ -7,6 +7,7 @@ import model.embeddable.IndexLinePK;
 import javax.persistence.*;
 
 @Entity
+@NamedQuery(name = "IndexLine.removeIndexLinesByDocumentsList", query = "delete from IndexLine where indexLinePK.document in :docsList")
 public class IndexLine {
     @EmbeddedId
     @Getter

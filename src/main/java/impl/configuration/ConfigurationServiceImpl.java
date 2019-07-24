@@ -10,6 +10,7 @@ import interfaces.services.ConfigurationService;
 import interfaces.services.IndexService;
 import interfaces.services.SearchService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -45,7 +46,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public synchronized IndexService createIndexService() {
+    public synchronized IndexService createIndexService() throws IOException {
         IndexServiceImpl indexService = new IndexServiceImpl(lexer == null ? new SimpleTokenizer() : lexer, lock);
         indexServices.add(indexService);
         return indexService;

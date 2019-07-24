@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -17,50 +18,48 @@ import static impl.configuration.Configurations.em;
 
 public class IndexServiceImpl extends AbstractIndexService {
 
-    private final ReadWriteLock lock;
-
-    public IndexServiceImpl(Lexer lexer, ReadWriteLock lock) {
-        super(lexer);
-        this.lock = lock;
+    public IndexServiceImpl(Lexer lexer, ReadWriteLock lock) throws IOException {
+        super(lexer, lock);
     }
 
-    public IndexServiceImpl(Lexer lexer) {
+    public IndexServiceImpl(Lexer lexer) throws IOException {
         this(lexer, Configurations.getIndexLock());
     }
 
     @Override
     public void addToIndex(Path path) throws IOException {
+        // File is deleted or temporal
+        if (!isFileNotHidden(path)) {
+            return;
+        }
         lock.writeLock().lock();
-        try(Stream<Path> paths = Files.walk(path)) {
+        try(Stream<Path> paths = Files.walk(path).filter(this::isFileNotHidden)) {
             em.getTransaction().begin();
-            paths.forEach(this::addSingleFileToIndex);
+            paths.forEach(p -> {
+                addSingleFileToIndex(p);
+                if (Files.isDirectory(p)) {
+                    registerDirectory(p);
+                }
+            });
             em.getTransaction().commit();
-            //TODO: delete, when debug mode is over
-            em.createQuery("from IndexLine", IndexLine.class).getResultList().forEach(System.out::println);
-        } catch (Exception e) {
-            e.printStackTrace();
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
         } finally {
             lock.writeLock().unlock();
         }
     }
 
     @Override
-    public void removeFromIndex(Path path) throws IOException {
+    public void removeFromIndex(Path path) {
         lock.writeLock().lock();
-        try(Stream<Path> paths = Files.walk(path)) {
+        try {
             em.getTransaction().begin();
-            paths.forEach(this::removeSingleFileFromIndex);
+            List<AbstractFile> filesToRemove = em.createNamedQuery(AbstractFile.class.getSimpleName() + ".findAllFilesByPath", AbstractFile.class)
+                    .setParameter("path", path.toAbsolutePath().toString()).getResultList();
+            List<Document> docsToRemove = em.createNamedQuery(Document.class.getSimpleName() + ".findDocumentsByFileList", Document.class)
+                    .setParameter("filesList", filesToRemove.stream().filter(f -> f instanceof RegularFile).collect(Collectors.toList())).getResultList();
+            em.createNamedQuery(IndexLine.class.getSimpleName() + ".removeIndexLinesByDocumentsList")
+                    .setParameter("docsList", docsToRemove).executeUpdate();
+            filesToRemove.forEach(em::remove);
             em.getTransaction().commit();
-            //TODO: delete, when debug mode is over
-            em.createQuery("from IndexLine", IndexLine.class).getResultList().forEach(System.out::println);
-        } catch (Exception e) {
-            e.printStackTrace();
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
         } finally {
             lock.writeLock().unlock();
         }
@@ -72,7 +71,7 @@ public class IndexServiceImpl extends AbstractIndexService {
     }
 
     @Override
-    public void removeFromIndex(String path) throws IOException {
+    public void removeFromIndex(String path) {
         removeFromIndex(Paths.get(path));
     }
 
@@ -116,28 +115,8 @@ public class IndexServiceImpl extends AbstractIndexService {
                     em.persist(indexLine);
                 });
             } catch (IOException e) {
-                throw new RuntimeException("Ошибка ввода-вывода!");
+                e.printStackTrace();
             }
         }
-    }
-
-    private void removeSingleFileFromIndex(Path path) {
-        if (!Files.exists(path)) {
-            throw new IllegalArgumentException("Файл по указанному адресу не найден!");
-        }
-
-        String fullPath = path.toAbsolutePath().toString();
-
-        RegularFile regularFile = em.find(RegularFile.class, fullPath);
-
-        // This file is already removed from index
-        if (regularFile == null) {
-            return;
-        }
-
-        em.createQuery("delete from IndexLine il where il.indexLinePK.document = :doc")
-                .setParameter("doc", regularFile.getDocument()).executeUpdate();
-
-        em.remove(regularFile);
     }
 }

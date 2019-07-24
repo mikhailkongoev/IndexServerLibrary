@@ -2,12 +2,15 @@ package impl.search;
 
 import impl.configuration.Configurations;
 import interfaces.lexer.Lexer;
+import model.entities.Document;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.stream.Collectors;
+
+import static impl.configuration.Configurations.em;
 
 public class SearchServiceImpl extends AbstractSearchService {
 
@@ -28,11 +31,9 @@ public class SearchServiceImpl extends AbstractSearchService {
         try {
             Collection<String> keywords = lexer.parse(query);
 
-            Set<Path> relevantFiles = new HashSet<>();
-            for (String keyword: keywords) {
-                //TODO: query to impl.index, get documents, then get files
-            }
-            return relevantFiles;
+            Collection<Document> docs = em.createQuery("select distinct il.indexLinePK.document from IndexLine il " +
+                    "where il.indexLinePK.keyword in (:keywords)", Document.class).setParameter("keywords", keywords).getResultList();
+            return docs.stream().map(d -> Paths.get(d.getFile().getFullPath())).collect(Collectors.toList());
         } finally {
             lock.readLock().unlock();
         }
