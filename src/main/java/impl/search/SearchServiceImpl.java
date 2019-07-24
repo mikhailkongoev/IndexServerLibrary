@@ -12,6 +12,10 @@ import java.util.stream.Collectors;
 
 import static impl.configuration.Configurations.em;
 
+/**
+ * Стандартная реализация {@link interfaces.services.SearchService}
+ * Способна только на лексический анализ запроса.
+ */
 public class SearchServiceImpl extends AbstractSearchService {
 
     private ReadWriteLock lock;
@@ -25,6 +29,12 @@ public class SearchServiceImpl extends AbstractSearchService {
         this(lexer, Configurations.getIndexLock());
     }
 
+    /**
+     * Осуществляет запрос в индекс с использованием {@link interfaces.lexer.Lexer} из {@link impl.search.AbstractSearchService}
+     *
+     * @param query Пользовательский запрос
+     * @return Коллекция файлов, удавлетворяющих запросу
+     */
     @Override
     public Collection<Path> search(String query) {
         lock.readLock().lock();

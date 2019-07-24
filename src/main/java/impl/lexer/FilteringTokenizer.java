@@ -11,6 +11,10 @@ import java.util.stream.Collectors;
 
 import static impl.configuration.Configurations.em;
 
+/**
+ * Токенайзер, который при индексации и поиске не учитывает {@link InsignificantWord},
+ * не интересные нам слова, наподобие артиклей, союзов, предлогов, аббревиатур.
+ */
 public class FilteringTokenizer implements Lexer {
     @Override
     public Collection<String> parse(String query) {

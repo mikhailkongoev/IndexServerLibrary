@@ -9,12 +9,21 @@ import javax.persistence.OneToOne;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Primary key для {@link model.entities.IndexLine}
+ */
 @Embeddable
 public class IndexLinePK implements Serializable {
+    /**
+     * Ключевое слово
+     */
     @Column
     @Getter
     private String keyword;
 
+    /**
+     * Проиндексированный документ
+     */
     @OneToOne
     @Getter
     private Document document;

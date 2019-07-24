@@ -16,16 +16,28 @@ import java.util.stream.Stream;
 
 import static impl.configuration.Configurations.em;
 
+/**
+ * Стандартная реализация {@link interfaces.services.IndexService}
+ * Производит индексацию файлов с применением только лексического анализа содержимого.
+ */
 public class IndexServiceImpl extends AbstractIndexService {
 
-    public IndexServiceImpl(Lexer lexer, ReadWriteLock lock) throws IOException {
+    public IndexServiceImpl(Lexer lexer, ReadWriteLock lock) {
         super(lexer, lock);
     }
 
-    public IndexServiceImpl(Lexer lexer) throws IOException {
+    public IndexServiceImpl(Lexer lexer) {
         this(lexer, Configurations.getIndexLock());
     }
 
+    /**
+     * Добавляет указанный файл или директорию вместе со всем её содержимым в индекс.
+     * Использует сохранённый в {@link impl.index.AbstractIndexService} {@link interfaces.lexer.Lexer} для индексации
+     *
+     * @param path Файл или директория, которую необходимо проиндексировать
+     *
+     * @throws IOException Возникает при ошибке получения доступа к указанному файлу
+     */
     @Override
     public void addToIndex(Path path) throws IOException {
         // File is deleted or temporal
@@ -47,6 +59,12 @@ public class IndexServiceImpl extends AbstractIndexService {
         }
     }
 
+    /**
+     * Удаляет указанный файл или директорию вместе со всем её содержимым из индекса.
+     * Обычно вызывается уже после удаления файла/директории в операционной системе, поэтому ориентируется на строковое значение пути.
+     *
+     * @param path Файл или директория, которую необходимо удалить из индекса
+     */
     @Override
     public void removeFromIndex(Path path) {
         lock.writeLock().lock();
@@ -65,11 +83,24 @@ public class IndexServiceImpl extends AbstractIndexService {
         }
     }
 
+    /**
+     * Добавляет указанные по пути файл или директорию вместе со всем её содержимым в индекс.
+     * Использует сохранённый в {@link impl.index.AbstractIndexService} {@link interfaces.lexer.Lexer} для индексации
+     *
+     * @param path Путь до файла или директории, которую необходимо проиндексировать
+     *
+     * @throws IOException Возникает при ошибке получения доступа к указанному файлу
+     */
     @Override
     public void addToIndex(String path) throws IOException {
         addToIndex(Paths.get(path));
     }
 
+    /**
+     * Удаляет указанный по пути файл или директорию вместе со всем её содержимым из индекса.
+     *
+     * @param path Путь до файла или директории, которую необходимо удалить из индекса
+     */
     @Override
     public void removeFromIndex(String path) {
         removeFromIndex(Paths.get(path));

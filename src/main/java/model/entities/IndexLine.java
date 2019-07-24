@@ -6,6 +6,9 @@ import model.embeddable.IndexLinePK;
 
 import javax.persistence.*;
 
+/**
+ * Связка keyword-document. Позволяет искать проиндексированные документы по ключевым словам, в них содержащихся.
+ */
 @Entity
 @NamedQuery(name = "IndexLine.removeIndexLinesByDocumentsList", query = "delete from IndexLine where indexLinePK.document in :docsList")
 public class IndexLine {

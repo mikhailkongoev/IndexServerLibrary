@@ -12,6 +12,12 @@ import java.util.stream.Stream;
 
 import static java.nio.file.StandardWatchEventKinds.*;
 
+/**
+ * Предок всех {@link IndexService}
+ * Хранит ссылку на используемый для индексации {@link Lexer}
+ * А также занимается отслеживанием изменений файловой системы по проиндексированным файлам и директориям.
+ * Отслеживает изменения за счёт событий в отдельном потоке-демоне, переиндексирует все, затронутые изменениями файлы.
+ */
 public abstract class AbstractIndexService implements IndexService {
     Lexer lexer;
 
@@ -25,6 +31,12 @@ public abstract class AbstractIndexService implements IndexService {
         try {
             watcher = FileSystems.getDefault().newWatchService();
             Runnable fileSystemListener = new Runnable() {
+                /**
+                 * Отслеживает изменения в файловой системе.
+                 * При изменении файла или директории индексирует всё его содержимое, рекурсивно.
+                 * Переименование считается за удаление + создание, поэтому если папка была проиндексирована частично,
+                 * затем была переименована, то она станет полностью проиндексирована.
+                 */
                 @Override
                 public void run() {
                     while(true) {
@@ -102,7 +114,7 @@ public abstract class AbstractIndexService implements IndexService {
         }
     }
 
-    AbstractIndexService(Lexer lexer, ReadWriteLock lock) throws IOException {
+    AbstractIndexService(Lexer lexer, ReadWriteLock lock) {
         this.lexer = lexer;
         this.lock = lock;
     }
@@ -111,6 +123,11 @@ public abstract class AbstractIndexService implements IndexService {
         this.lexer = lexer;
     }
 
+    /**
+     * Добавляет директорию к отслеживаемым.
+     *
+     * @param dir Директория, которую необходимо начать отслеживать
+     */
     void registerDirectory(Path dir) {
         WatchKey key;
         try {
@@ -120,13 +137,6 @@ public abstract class AbstractIndexService implements IndexService {
             throw new RuntimeException("Ошибка ввода-вывода");
         }
         keys.put(key, dir);
-    }
-
-    void unregisterDirectory(Path dir) {
-        keys.entrySet().stream().filter(e -> e.getValue().equals(dir)).findAny().ifPresent(e -> {
-            e.getKey().cancel();
-            keys.remove(e.getKey());
-        });
     }
 
     /**
