@@ -3,10 +3,7 @@ package impl.lexer;
 import interfaces.lexer.Lexer;
 import model.entities.InsignificantWord;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static impl.configuration.Configurations.em;
@@ -21,7 +18,7 @@ public class FilteringTokenizer implements Lexer {
         Collection<String> insignificantWords = em.createNamedQuery(InsignificantWord.class.getSimpleName() + ".findAllInsignificantWords",
                 InsignificantWord.class).getResultList().stream().map(InsignificantWord::getValue).collect(Collectors.toList());
 
-        Set<String> allQueryWords = new HashSet<>(Arrays.asList(query.trim().split("\\s+")));
+        List<String> allQueryWords = Arrays.stream(query.trim().split("\\s+")).distinct().filter(s -> !s.isEmpty()).collect(Collectors.toList());
         allQueryWords.removeAll(insignificantWords);
         return allQueryWords;
     }

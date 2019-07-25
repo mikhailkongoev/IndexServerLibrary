@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class SynonymTokenizer implements Lexer {
     @Override
     public Collection<String> parse(String query) {
-        return Arrays.stream(query.trim().split("\\s+")).flatMap(k -> getSynonyms(k).stream()).collect(Collectors.toList());
+        return Arrays.stream(query.trim().split("\\s+")).flatMap(k -> getSynonyms(k).stream()).filter(s -> !s.isEmpty()).collect(Collectors.toList());
     }
 
     /**

@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class StemmingTokenizer implements Lexer {
     @Override
     public Collection<String> parse(String query) {
-        return Arrays.stream(query.trim().split("\\s+")).map(this::stemStr).collect(Collectors.toList());
+        return Arrays.stream(query.trim().split("\\s+")).map(this::stemStr).distinct().filter(s -> !s.isEmpty()).collect(Collectors.toList());
     }
 
     /**
@@ -21,6 +21,15 @@ public class StemmingTokenizer implements Lexer {
      */
     private String stemStr(String keyword) {
         //TODO: implement
-        return keyword;
+        switch (keyword) {
+            case "made":
+                return "make";
+            case "his":
+                return "he";
+            case "better":
+                return "good";
+            default:
+                return keyword;
+        }
     }
 }

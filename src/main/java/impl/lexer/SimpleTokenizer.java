@@ -4,6 +4,7 @@ import interfaces.lexer.Lexer;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * Токенайзер, который разбивает содержимое файла или запрос по пробельным символам.
@@ -11,6 +12,6 @@ import java.util.Collection;
 public class SimpleTokenizer implements Lexer {
     @Override
     public Collection<String> parse(String query) {
-        return Arrays.asList(query.trim().split("\\s+"));
+        return Arrays.stream(query.trim().split("\\s+")).distinct().filter(s -> !s.isEmpty()).collect(Collectors.toList());
     }
 }

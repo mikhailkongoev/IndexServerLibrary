@@ -28,4 +28,11 @@ public class InsignificantWord {
     @Getter
     @Setter
     private String value;
+
+    public InsignificantWord(String value) {
+        this.value = value;
+    }
+
+    public InsignificantWord() {
+    }
 }
